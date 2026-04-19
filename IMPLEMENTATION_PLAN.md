@@ -25,11 +25,11 @@ Build a production-grade MCP Server that exposes product-search tools for Amazon
 
 ## Phase 4: Scraper / API Integration Layer ✅
 - [x] `scrapers/__init__.py` – Base scraper interface (`BaseScraper` ABC)
-- [x] `scrapers/amazon.py` – Amazon product search (mock implementation)
-- [x] `scrapers/flipkart.py` – Flipkart product search (mock implementation)
-- [x] `scrapers/myntra.py` – Myntra product search (mock implementation)
-- [ ] Feature flag to toggle between mock data and live scrapers
-- [ ] Rate limiting and retry logic for live scrapers
+- [x] `scrapers/gemini_scraper.py` – Real scraper using Gemini Google Search Grounding
+- [x] `scrapers/amazon.py` – Amazon product search (mock fallback)
+- [x] `scrapers/flipkart.py` – Flipkart product search (mock fallback)
+- [x] `scrapers/myntra.py` – Myntra product search (mock fallback)
+- [x] Feature flag (`SCRAPER_MODE`) to toggle between mock data and Gemini scrapers
 
 ## Phase 5: Environment & Google Access ✅
 - [x] `.env.example` – Template with all environment variables
@@ -61,6 +61,7 @@ ecommerce-best-products-server/
 │   ├── tools.py
 │   └── scrapers/
 │       ├── __init__.py
+│       ├── gemini_scraper.py
 │       ├── amazon.py
 │       ├── flipkart.py
 │       └── myntra.py
