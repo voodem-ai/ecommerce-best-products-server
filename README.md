@@ -80,7 +80,8 @@ Each tool returns a JSON array of products sorted by: **rating (desc) → price 
 | Method | Path | Description |
 |---|---|---|
 | GET | `/health` | Liveness probe |
-| * | `/mcp/*` | MCP Streamable HTTP transport |
+| GET | `/mcp/sse` | MCP Server-Sent Events stream connection |
+| POST | `/mcp/messages` | MCP RPC messages endpoint |
 
 ## Project Structure
 

@@ -35,13 +35,13 @@ class GeminiScraper(BaseScraper):
         self.source = source
         self.site_domain = site_domain
         
-        # Support both Google AI Studio (API Key) and Vertex AI (GCP)
-        if hasattr(settings, "GOOGLE_CLOUD_PROJECT") and settings.GOOGLE_CLOUD_PROJECT:
+        # Prioritize AI Studio (API Key) over Vertex AI (GCP)
+        if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "your-gemini-api-key-here":
+            self._client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        elif hasattr(settings, "GOOGLE_CLOUD_PROJECT") and settings.GOOGLE_CLOUD_PROJECT:
             self._client = genai.Client(
                 vertexai=True, project=settings.GOOGLE_CLOUD_PROJECT
             )
-        elif settings.GEMINI_API_KEY:
-            self._client = genai.Client(api_key=settings.GEMINI_API_KEY)
         else:
             # Fallback to auto-discovery
             self._client = genai.Client()
