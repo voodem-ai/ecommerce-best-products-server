@@ -1,54 +1,107 @@
 # E-Commerce Best Products – MCP Server
 
-An MCP (Model Context Protocol) server that exposes product search tools for **Amazon.in**, **Flipkart.com**, and **Myntra.com**.
+An MCP (Model Context Protocol) server that exposes product search tools for **Amazon.in**, **Flipkart.com**, and **Myntra.com**. Products are ranked by **top-rated → lowest price → most buyers**.
 
 ## Architecture
 
 ```
-┌────────────────────┐       SSE / Streamable HTTP
-│   MCP Client       │ ──────────────────────────────▶ │ MCP Server (this repo) │
-│  (Gemini Agent)    │                                  │  ├─ search_amazon       │
-└────────────────────┘                                  │  ├─ search_flipkart     │
-                                                        │  └─ search_myntra      │
-                                                        │       ↕  Redis Cache   │
-                                                        └────────────────────────┘
+┌────────────────────┐    Streamable HTTP / SSE     ┌─────────────────────────────┐
+│   MCP Client       │ ──────────────────────────▶  │  MCP Server (this repo)     │
+│  (Gemini Agent)    │                              │   ├─ search_amazon           │
+└────────────────────┘                              │   ├─ search_flipkart         │
+                                                    │   ├─ search_myntra           │
+                                                    │   └─ Redis Cache ↕           │
+                                                    └─────────────────────────────┘
 ```
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python 3.12+ |
+| Build Tool | Poetry |
+| MCP | FastMCP (official Python SDK) |
+| Web Framework | FastAPI + Uvicorn |
+| Data Models | Pydantic v2 |
+| Caching | Redis (async, graceful fallback) |
+| Scraping | httpx + BeautifulSoup4 (mock layer for now) |
+| Logging | structlog (structured JSON) |
+| Config | python-dotenv + environment variables |
+| Container | Docker (multi-stage) |
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.12+
-- Poetry
-- Redis (optional – the server degrades gracefully without it)
+### 1. Clone & Configure
+```bash
+git clone https://github.com/voodem-ai/ecommerce-best-products-server.git
+cd ecommerce-best-products-server
+cp .env.example .env
+# Edit .env with your values
+```
 
-### Install & Run
+### 2. Install & Run
 ```bash
 poetry install
 poetry run uvicorn server.main:app --reload --port 8000
 ```
 
-### Docker
+### 3. Docker
 ```bash
 docker build -t mcp-server .
-docker run -p 8000:8000 mcp-server
+docker run -p 8000:8000 --env-file .env mcp-server
 ```
 
-### Environment Variables
-| Variable | Default | Description |
-|---|---|---|
-| `REDIS_HOST` | `localhost` | Redis hostname |
-| `REDIS_PORT` | `6379` | Redis port |
-| `REDIS_TTL` | `3600` | Cache TTL in seconds |
-| `SERVER_HOST` | `0.0.0.0` | Bind address |
-| `SERVER_PORT` | `8000` | Bind port |
+## Environment Variables (`.env`)
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `REDIS_HOST` | `localhost` | No | Redis hostname |
+| `REDIS_PORT` | `6379` | No | Redis port |
+| `REDIS_TTL` | `3600` | No | Cache TTL (seconds) |
+| `SERVER_HOST` | `0.0.0.0` | No | Bind address |
+| `SERVER_PORT` | `8000` | No | Bind port |
+| `GOOGLE_APPLICATION_CREDENTIALS` | – | No | GCP service account JSON (future) |
+| `GOOGLE_CLOUD_PROJECT` | – | No | GCP project ID (future) |
 
 ## MCP Tools
 
-| Tool | Description |
-|---|---|
-| `search_amazon` | Searches Amazon.in – returns top-rated, lowest-price, highest-buyer products |
-| `search_flipkart` | Searches Flipkart.com – same ranking criteria |
-| `search_myntra` | Searches Myntra.com – same ranking criteria |
+| Tool | Description | Parameters |
+|---|---|---|
+| `search_amazon` | Search Amazon.in | `query` (str), `max_price` (float, optional) |
+| `search_flipkart` | Search Flipkart.com | `query` (str), `max_price` (float, optional) |
+| `search_myntra` | Search Myntra.com | `query` (str), `max_price` (float, optional) |
+
+Each tool returns a JSON array of products sorted by: **rating (desc) → price (asc) → buyers (desc)**.
+
+## API Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/health` | Liveness probe |
+| * | `/mcp/*` | MCP Streamable HTTP transport |
+
+## Project Structure
+
+```
+src/server/
+├── __init__.py
+├── main.py          # FastAPI + MCP entry point
+├── config.py        # .env + environment settings
+├── cache.py         # Redis async cache layer
+├── models.py        # Pydantic data models
+├── tools.py         # MCP tool implementations
+└── scrapers/
+    ├── __init__.py   # BaseScraper ABC
+    ├── amazon.py     # Amazon scraper (mock)
+    ├── flipkart.py   # Flipkart scraper (mock)
+    └── myntra.py     # Myntra scraper (mock)
+```
+
+## Testing
+
+```bash
+poetry run pytest tests/ -v
+```
 
 ## License
 MIT
