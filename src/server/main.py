@@ -83,7 +83,7 @@ app = FastAPI(
 )
 
 # Mount the MCP SSE transport under the FastAPI app
-app.mount("/mcp", mcp.streamable_http_app())
+app.mount("/mcp", mcp.sse_app())
 
 
 @app.get("/health")
