@@ -110,6 +110,7 @@ FastAPI app (uvicorn, port 8000)
 | Logging | structlog (structured JSON) |
 | Config | python-dotenv + environment variables |
 | Container | Docker (multi-stage) |
+| Deployment | Helm chart with internal ClusterIP Service |
 
 ---
 
@@ -194,6 +195,8 @@ src/server/
     ├── amazon.py        # Mock fallback scraper
     ├── flipkart.py      # Mock fallback scraper
     └── myntra.py        # Mock fallback scraper
+helm/
+└── ecommerce-server/    # Helm chart deployment files
 ```
 
 ---

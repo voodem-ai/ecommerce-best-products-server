@@ -57,7 +57,8 @@ Build a production-grade MCP Server that exposes product-search tools for Amazon
 ## Phase 8: Deployment ✅
 - [x] `docker-compose.yml` (shared across ecosystem)
 - [x] Environment variable documentation in README
-- [ ] GitHub Actions CI pipeline
+- [x] GitHub Actions CI pipeline with Helm deployment (`helm/ecommerce-server/`)
+- [x] Internal Networking (ClusterIP) to ensure the server is isolated from public internet
 
 ---
 
@@ -80,6 +81,8 @@ ecommerce-best-products-server/
 ├── tests/
 │   ├── __init__.py
 │   └── test_tools.py
+├── helm/
+│   └── ecommerce-server/    ← Helm chart deployment files
 ├── .env                     ← Local config (not committed)
 ├── .env.example             ← Template
 ├── SKILLS.md

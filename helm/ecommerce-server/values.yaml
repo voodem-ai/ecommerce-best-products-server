@@ -1,0 +1,24 @@
+replicaCount: 1
+
+image:
+  repository: REPLACE_ME_SERVER_IMAGE
+  pullPolicy: IfNotPresent
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: "ecommerce-server"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  SCRAPER_MODE: "gemini"
+
+secrets:
+  name: ecommerce-secrets
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

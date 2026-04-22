@@ -52,6 +52,10 @@ Technical skills and competencies required to develop, maintain, and extend this
 - **Poetry in Docker** – Installing Poetry, caching dependency layers
 - **Health checks** – Liveness/readiness probes
 
+### Kubernetes & Deployment
+- **Helm** – Managing deployments using a centralized Helm chart (`helm/ecommerce-server/`)
+- **Internal Networking** – Using a `ClusterIP` service to ensure the MCP server is only accessible from within the cluster.
+
 ### Docker Compose
 - **Service orchestration** – Multi-container setup with dependencies
 - **Health check conditions** – `condition: service_healthy`
